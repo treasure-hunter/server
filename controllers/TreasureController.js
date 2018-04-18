@@ -1,20 +1,23 @@
 const firebase = require('firebase')
-// Initialize Firebase
-// const config = {
-//   apiKey: "AIzaSyBcuLoD388iMtThDVgw83xloalWRQX4v4s",
-//   authDomain: "treasure-hunter-1c288.firebaseapp.com",
-//   databaseURL: "https://treasure-hunter-1c288.firebaseio.com",
-//   projectId: "treasure-hunter-1c288",
-// };
-// firebase.initializeApp(config);
-// const database = firebase.database()
-
 const database = require('../firebase/index')
 
 module.exports = {
   newRoom: (req, res) => {
     // create new room here
     // validation
+    if (!req.body) {
+      return res.status(400).json({
+        message: 'no data sent'
+      })
+    } else if (!req.body.roomName) {
+      return res.status(400).json({
+        message: 'no room name'
+      })
+    } else if (!req.body.treasures) {
+      return res.status(400).json({
+        message: 'no treasures location data'
+      })
+    }
     console.log(req.body);
     const data = {
       roomName: req.body.roomName,
@@ -29,12 +32,48 @@ module.exports = {
       data
     })
   },
-  updateTreasure: (req, res) => {
+  updateRoom: (req, res) => {
     // if matching, update treasure as completed
     // if failed match, do not update treasure and send feedback
+
+    // mock
+    let match = true
+    if (req.params.id.length > 30) {
+      return res.status(400).json({
+        message: 'ID too long'
+      })
+    }
+    let id = req.params.id
+    let updates = {
+      isCompleted: true
+    }
+    if (match) {
+      database.ref('Room').child(id).update(updates).then((something) => {
+        console.log(something);
+        res.status(200).json({
+          message: 'Room sucessfully completed'
+        })
+      }).catch(err => {
+        res.status(500).json({
+          message: 'something went wrong at firebase update',
+          err
+        })
+      })
+
+    }
   },
-  deleteTreasure: (req, res) => {
+  deleteRoom: (req, res) => {
     // too remove treasure data after finished
+    if (req.params.id.length > 30) {
+      return res.status(400).json({
+        message: 'ID too long'
+      })
+    }
+    let id = req.params.id
+    database.ref('Room').child(id).remove()
+    res.status(200).json({
+      message: 'Room removed'
+    })
   }
 
 };
