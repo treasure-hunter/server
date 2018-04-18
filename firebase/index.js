@@ -1,10 +1,13 @@
-// Initialize Firebase
-const firebase = require('firebase')
-const config = {
-  apiKey: "AIzaSyBcuLoD388iMtThDVgw83xloalWRQX4v4s",
-  authDomain: "treasure-hunter-1c288.firebaseapp.com",
-  databaseURL: "https://treasure-hunter-1c288.firebaseio.com",
-  projectId: "treasure-hunter-1c288",
-};
-const database = firebase.initializeApp(config).database();
+// admin
+const admin = require('firebase-admin');
+
+const serviceAccount = require('../firebase-admin-secret.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://treasure-hunter-1c288.firebaseio.com'
+});
+
+const database = admin.database();
+
 module.exports = database;
