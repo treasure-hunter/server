@@ -6,10 +6,11 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 require('dotenv').config()
-const firebase = require('firebase')
+
 
 const index = require('./routes/index');
 const users = require('./routes/users');
+const treasure = require('./routes/treasure')
 
 const app = express();
 
@@ -17,14 +18,7 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// Initialize Firebase
-const config = {
-  apiKey: "AIzaSyBcuLoD388iMtThDVgw83xloalWRQX4v4s",
-  authDomain: "treasure-hunter-1c288.firebaseapp.com",
-  databaseURL: "https://treasure-hunter-1c288.firebaseio.com",
-  projectId: "treasure-hunter-1c288",
-};
-firebase.initializeApp(config);
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -37,6 +31,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
+app.use('/treasure', treasure);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

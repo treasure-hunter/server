@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { newTreasure, updateTreasure, deleteTreasure} = require('../controllers/TreasureController.js')
+const { newRoom, updateTreasure, deleteTreasure} = require('../controllers/TreasureController.js')
 const jwt = require('../middleware/jwt.js')
 
 /* GET users listing. */
@@ -9,6 +9,6 @@ const jwt = require('../middleware/jwt.js')
 // });
 
 // path /treasure
-router.post('/new',newTreasure)
+router.post('/new',newRoom)
 
 module.exports = router;
