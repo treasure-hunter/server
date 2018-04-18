@@ -9,7 +9,7 @@ const jwt = require('../middleware/jwt.js')
 // });
 
 // path /treasure
-router.post('/new',newRoom)
+router.post('/new/:uid',newRoom)
 router.put('/update/:id', updateRoom)
 router.delete('/delete/:id', deleteRoom)
 

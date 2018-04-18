@@ -7,9 +7,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors')
 require('dotenv').config()
 
-
 const index = require('./routes/index');
-const users = require('./routes/users');
+// const users = require('./routes/users');
 const treasure = require('./routes/treasure')
 
 const app = express();
@@ -17,8 +16,6 @@ const app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
-
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -30,7 +27,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
+// app.use('/users', users);
 app.use('/treasure', treasure);
 
 // catch 404 and forward to error handler

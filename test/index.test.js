@@ -24,8 +24,9 @@ describe('firebase crud', () => {
       description: 'chaiDesc',
       treasures: 'chaiTreasures'
     }
+    let uid = 'TESTUID123'
     chai.request(app)
-    .post('/treasure/new')
+    .post(`/treasure/new/${uid}`)
     .type('form')
     .send(testData)
     .end((err, res) => {
@@ -34,6 +35,7 @@ describe('firebase crud', () => {
       expect(res.body.data).to.not.be.undefined
       expect(res.body.data.roomName).to.equal(testData.roomName)
       expect(res.body.data.description).to.equal(testData.description)
+      expect(res.body.data.uid).to.equal(uid)
       testID = res.body.newId
       done()
     })
