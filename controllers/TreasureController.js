@@ -18,7 +18,7 @@ module.exports = {
         message: 'no treasures location data'
       })
     }
-    console.log(req.body);
+    // console.log(req.body);
     const data = {
       roomName: req.body.roomName,
       description: req.body.description,
@@ -26,10 +26,11 @@ module.exports = {
       isCompleted: false,
       createdAt: firebase.database.ServerValue.TIMESTAMP
     }
-    database.ref('Room').push(data)
+    let newId = database.ref('Room').push(data)
     res.status(200).json({
       message: 'data sent to firebase',
-      data
+      data,
+      newId: newId.key
     })
   },
   updateRoom: (req, res) => {
@@ -48,8 +49,7 @@ module.exports = {
       isCompleted: true
     }
     if (match) {
-      database.ref('Room').child(id).update(updates).then((something) => {
-        console.log(something);
+      database.ref('Room').child(id).update(updates).then(() => {
         res.status(200).json({
           message: 'Room sucessfully completed'
         })
