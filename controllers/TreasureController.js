@@ -28,7 +28,7 @@ module.exports = {
       description: req.body.description,
       treasures: req.body.treasures,
       isCompleted: false,
-      uid: req.params.uid,
+      uid: req.body.uid,
       createdAt: firebase.database.ServerValue.TIMESTAMP
     }
     let newId = database.ref('Room').push(data)
