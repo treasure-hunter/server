@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-const dotEnvVerify = fs.existsSync('fancy-to-do-684a7e877064.json')
+const dotEnvVerify = fs.existsSync('firebase-admin-secret.json')
 if (dotEnvVerify) {
   console.log('Creds exist');
   process.exit();
