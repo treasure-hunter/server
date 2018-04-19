@@ -9,7 +9,7 @@ module.exports = {
       return res.status(400).json({
         message: 'no data sent'
       })
-    } else if (!req.params.uid) {
+    } else if (!req.body.uid) {
       return res.status(400).json({
         message: 'no user id'
       })
