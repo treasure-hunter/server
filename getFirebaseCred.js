@@ -14,7 +14,7 @@ const bucketName = `dotenv.fancy-to-do.teddydevstack.com`
 console.log(`Downloading Creds from bucket "${bucketName}"`)
 storage
   .bucket(bucketName)
-  .file('fancy-to-do-684a7e877064.json')
+  .file('firebase-admin-secret.json')
   .download({ destination: 'firebase-admin-secret.json' })
   .then(() => {
     console.info('firebase Creds downloaded')
