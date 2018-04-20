@@ -6,7 +6,9 @@ function verifyToken (req, res, next) {
   .then(function(decodedToken) {
     console.log('token', decodedToken);
     var uid = decodedToken.uid;
-    req.body.uid = uid
+    req.uid = uid
+    console.log(uid);
+    console.log(req.uid);
     next()
   }).catch(function(error) {
     console.log('err', error);
