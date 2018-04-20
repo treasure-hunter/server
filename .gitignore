@@ -60,3 +60,8 @@ typings/
 
 # firebase admin
 firebase-admin-secret.json
+
+# GCS service acc
+treasure_hunter_uploader.json
+treasure_hunter_uploader_new.json
+treasure_hunter_admin.json

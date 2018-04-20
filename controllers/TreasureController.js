@@ -5,11 +5,12 @@ module.exports = {
   newRoom: (req, res) => {
     // create new room here
     // validation
+    console.log(req.body);
     if (!req.body) {
       return res.status(400).json({
         message: 'no data sent'
       })
-    } else if (!req.body.uid) {
+    } else if (!req.uid) {
       return res.status(400).json({
         message: 'no user id'
       })
@@ -27,8 +28,9 @@ module.exports = {
       roomName: req.body.roomName,
       description: req.body.description,
       treasures: req.body.treasures,
+      image_path: req.file.cloudUrl,
       isCompleted: false,
-      uid: req.body.uid,
+      uid: req.uid,
       createdAt: firebase.database.ServerValue.TIMESTAMP
     }
     let newId = database.ref('Room').push(data)
@@ -75,6 +77,7 @@ module.exports = {
       })
     }
     let id = req.params.id
+
     database.ref('Room').child(id).remove()
     res.status(200).json({
       message: 'Room removed'
