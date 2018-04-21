@@ -6,7 +6,7 @@ const memupload = require('../middleware/multer.js')
 const { googleUpload, googleDelete } = require('../middleware/googleCloudStorage.js')
 
 // path /treasure
-router.post('/new',verifyToken, memupload.single('treasure'), googleUpload, newRoom)
+router.post('/new',verifyToken, memupload.single('image'), googleUpload, newRoom)
 router.put('/update/:id', verifyToken, updateRoom)
 router.delete('/delete/:id', verifyToken, googleDelete, deleteRoom)
 
