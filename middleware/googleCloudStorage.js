@@ -64,28 +64,36 @@ function googleDelete (req, res, next) {
 
     database.ref('Room').child(id).once('value')
     .then(snapshot => {
-      path = snapshot.val().image_path
-      console.log('Path', path);
+      if (snapshot.val().uid === req.uid) {
+        path = snapshot.val().image_path
+        console.log('Path', path);
 
-      console.log('deleting..');
-      let extra = 'https://storage.googleapis.com/treasure.teddydevstack.com/';
-      const targetFile = path.substr(extra.length);
-      console.log(targetFile);
+        console.log('deleting..');
+        let extra = 'https://storage.googleapis.com/treasure.teddydevstack.com/';
+        const targetFile = path.substr(extra.length);
+        console.log(targetFile);
 
-      storage
-        .bucket(config.CLOUD_BUCKET)
-        .file(targetFile)
-        .delete()
-        .then(() => {
-          console.log(`${config.CLOUD_BUCKET}/${targetFile} is deleted`);
-          next()
-        })
-        .catch(err => {
-          res.status(500).json({
-            message: 'failed to delete image',
-            err
+        storage
+          .bucket(config.CLOUD_BUCKET)
+          .file(targetFile)
+          .delete()
+          .then(() => {
+            console.log(`${config.CLOUD_BUCKET}/${targetFile} is deleted`);
+            next()
           })
+          .catch(err => {
+            res.status(500).json({
+              message: 'failed to delete image',
+              err
+            })
+          })
+      } else {
+        res.status(403).json({
+          message: 'Unauthorized to delete'
         })
+      }
+
+
     })
     .catch(e => {
       console.log(e);

@@ -21,10 +21,10 @@ module.exports = {
     }
     // console.log(req.body);
     let path
-    if (!req.body.cloudUrl) {
+    if (!req.file.cloudUrl) {
       path = 'N/A'
     } else {
-      path = req.body.cloudUrl
+      path = req.file.cloudUrl
     }
     const data = {
       roomName: req.body.roomName,
