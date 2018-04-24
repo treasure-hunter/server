@@ -1,5 +1,6 @@
 const firebase = require('firebase')
 const database = require('../firebase/index')
+const admin = require('firebase-admin');
 
 module.exports = {
   newRoom: (req, res) => {
@@ -18,14 +19,27 @@ module.exports = {
       return res.status(400).json({
         message: 'no room name'
       })
+    } else if (!req.body.latitude && !req.body.longitude) {
+      return res.status(400).json({
+        message: 'no geolocation'
+      })
+    } else if (!req.body.description) {
+      return res.status(400).json({
+        message: 'no description'
+      })
+    } else if (!req.body.hint) {
+      return res.status(400).json({
+        message: 'no hint'
+      })
     }
     // console.log(req.body);
     let path
-    if (!req.file.cloudUrl) {
+    if (!req.file) {
       path = 'N/A'
     } else {
       path = req.file.cloudUrl
     }
+    console.log(path);
     const data = {
       roomName: req.body.roomName,
       description: req.body.description,
@@ -60,17 +74,58 @@ module.exports = {
       isCompleted: true
     }
     if (match) {
-      database.ref('Room').child(id).update(updates).then(() => {
-        res.status(200).json({
-          message: 'Room sucessfully completed'
-        })
-      }).catch(err => {
-        res.status(500).json({
-          message: 'something went wrong at firebase update',
-          err
-        })
-      })
+      admin.auth().getUser(req.uid)
+        .then(userRecord => {
+          let displayName
+          if (userRecord.displayName === undefined) {
+            displayName = 'Anonymous'
+          } else {
+            displayName = userRecord.displayName
+          }
+          // console.log(displayName);
+          database.ref('Room').child(id).update(updates).then(() => {
+            database.ref('Room').child(id).child('winner').child(req.uid).once('value')
+              .then(snapshot => {
+                // console.log(snapshot.val());
+                if (snapshot.val() === null) {
+                  database.ref('Room')
+                    .child(id)
+                    .child('winner')
+                    .child(req.uid)
+                    .set({
+                      displayName: displayName,
+                      uid: req.uid
+                    }, (err) => {
+                      if (err) {
+                        res.status(500).json({
+                          message: 'update error',
+                          err
+                        })
+                      } else {
+                        res.status(200).json({
+                          message: 'Room sucessfully completed'
+                        })
+                      }
+                    })
+                } else {
+                  res.status(403).json({
+                    message: 'You cannot win twice!'
+                  })
+                }
 
+              })
+          }).catch(err => {
+            res.status(500).json({
+              message: 'something went wrong at firebase update',
+              err
+            })
+          })
+        }).catch(err => {
+          res.status(500).json({
+            message: 'something went wrong at firebase get user name',
+            err
+          })
+        })
     }
   },
   deleteRoom: (req, res) => {
