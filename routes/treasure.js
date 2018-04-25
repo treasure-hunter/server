@@ -3,10 +3,11 @@ const router = express.Router();
 const { newRoom, updateRoom, deleteRoom} = require('../controllers/TreasureController.js')
 const { verifyToken } = require('../middleware/firebaseAuth')
 const memupload = require('../middleware/multer.js')
+const checkUpload = require('../middleware/fileType.js')
 const { googleUpload, googleDelete } = require('../middleware/googleCloudStorage.js')
 
 // path /treasure
-router.post('/new',verifyToken, memupload.single('image'), googleUpload, newRoom)
+router.post('/new',verifyToken, memupload.single('image'), checkUpload, googleUpload, newRoom)
 router.put('/update/:id', verifyToken, updateRoom)
 router.delete('/delete/:id', verifyToken, googleDelete, deleteRoom)
 

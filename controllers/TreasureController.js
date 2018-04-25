@@ -15,19 +15,23 @@ module.exports = {
       return res.status(400).json({
         message: 'no user id'
       })
-    } else if (!req.body.roomName) {
+    } else if (!req.body.roomName || typeof req.body.roomName !== 'string' || req.body.roomName.length > 100) {
       return res.status(400).json({
         message: 'no room name'
       })
-    } else if (!req.body.latitude && !req.body.longitude) {
+    } else if (!req.body.latitude || typeof Number(req.body.latitude) !== 'number' || Number(req.body.latitude) === NaN) {
       return res.status(400).json({
         message: 'no geolocation'
       })
-    } else if (!req.body.description) {
+    } else if (!req.body.longitude || typeof Number(req.body.longitude) !== 'number' || Number(req.body.longitude) === NaN) {
+      return res.status(400).json({
+        message: 'no geolocation'
+      })
+    } else if (!req.body.description || typeof req.body.description !== 'string' || req.body.description.length > 150) {
       return res.status(400).json({
         message: 'no description'
       })
-    } else if (!req.body.hint) {
+    } else if (!req.body.hint || typeof req.body.hint !== 'string'|| req.body.hint.length > 100) {
       return res.status(400).json({
         message: 'no hint'
       })
