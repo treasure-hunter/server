@@ -57,6 +57,45 @@ function googleUpload (req, res, next) {
   stream.end(req.file.buffer);
 }
 
+function googleUploadWinner (req, res, next) {
+  console.log('===== gcs checking file... =====');
+  console.log(req.file);
+  if (!req.file) {
+    console.log('no file uploaded, skipping...');
+    return next();
+  }
+  const bucket = storage.bucket(config.CLOUD_BUCKET)
+
+  let extension = req.file.originalname.split('.').pop()
+  const destination = 'winner/'
+  const uploadName = destination + Date.now() + `-${req.uid}-` + 'quest.' + extension;
+  const file = bucket.file(uploadName);
+
+  // streaming
+  const stream = file.createWriteStream({
+    metadata: {
+      contentType : req.file.mimetype
+    }
+  });
+
+  stream.on('error', (err) => {
+    req.file.cloudStorageError = err;
+    next(err);
+  });
+
+  stream.on('finish', () => {
+    req.file.cloudStorageObject = uploadName;
+    file.makePublic()
+      .then(() => {
+        console.log('upload finished');
+        req.file.cloudUrl = storageUrl(uploadName);
+        next();
+      });
+  });
+
+  stream.end(req.file.buffer);
+}
+
 function googleDelete (req, res, next) {
   console.log('checking data...');
   let id = req.params.id
@@ -66,6 +105,10 @@ function googleDelete (req, res, next) {
     .then(snapshot => {
       if (snapshot.val().uid === req.uid) {
         path = snapshot.val().image_path
+        if (path === 'N/A') {
+          console.log('No image to delete');
+          return next()
+        }
         console.log('Path', path);
 
         console.log('deleting..');
@@ -105,5 +148,6 @@ function googleDelete (req, res, next) {
 
 module.exports = {
   googleUpload: googleUpload,
-  googleDelete: googleDelete
+  googleDelete: googleDelete,
+  googleUploadWinner: googleUploadWinner
 };

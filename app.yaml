@@ -1,2 +1,5 @@
 runtime: nodejs
 env: flex
+
+skip_files:
+  - test/testUID.js
