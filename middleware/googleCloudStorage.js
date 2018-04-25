@@ -39,7 +39,7 @@ function googleUpload (req, res, next) {
     }
   });
 
-  stream.on('error', (err) => {
+  stream.on('error', /* istanbul ignore next */ (err) => {
     req.file.cloudStorageError = err;
     next(err);
   });
@@ -57,44 +57,44 @@ function googleUpload (req, res, next) {
   stream.end(req.file.buffer);
 }
 
-function googleUploadWinner (req, res, next) {
-  console.log('===== gcs checking file... =====');
-  console.log(req.file);
-  if (!req.file) {
-    console.log('no file uploaded, skipping...');
-    return next();
-  }
-  const bucket = storage.bucket(config.CLOUD_BUCKET)
-
-  let extension = req.file.originalname.split('.').pop()
-  const destination = 'winner/'
-  const uploadName = destination + Date.now() + `-${req.uid}-` + 'quest.' + extension;
-  const file = bucket.file(uploadName);
-
-  // streaming
-  const stream = file.createWriteStream({
-    metadata: {
-      contentType : req.file.mimetype
-    }
-  });
-
-  stream.on('error', (err) => {
-    req.file.cloudStorageError = err;
-    next(err);
-  });
-
-  stream.on('finish', () => {
-    req.file.cloudStorageObject = uploadName;
-    file.makePublic()
-      .then(() => {
-        console.log('upload finished');
-        req.file.cloudUrl = storageUrl(uploadName);
-        next();
-      });
-  });
-
-  stream.end(req.file.buffer);
-}
+// function googleUploadWinner (req, res, next) {
+//   console.log('===== gcs checking file... =====');
+//   console.log(req.file);
+//   if (!req.file) {
+//     console.log('no file uploaded, skipping...');
+//     return next();
+//   }
+//   const bucket = storage.bucket(config.CLOUD_BUCKET)
+//
+//   let extension = req.file.originalname.split('.').pop()
+//   const destination = 'winner/'
+//   const uploadName = destination + Date.now() + `-${req.uid}-` + 'quest.' + extension;
+//   const file = bucket.file(uploadName);
+//
+//   // streaming
+//   const stream = file.createWriteStream({
+//     metadata: {
+//       contentType : req.file.mimetype
+//     }
+//   });
+//
+//   stream.on('error', (err) => {
+//     req.file.cloudStorageError = err;
+//     next(err);
+//   });
+//
+//   stream.on('finish', () => {
+//     req.file.cloudStorageObject = uploadName;
+//     file.makePublic()
+//       .then(() => {
+//         console.log('upload finished');
+//         req.file.cloudUrl = storageUrl(uploadName);
+//         next();
+//       });
+//   });
+//
+//   stream.end(req.file.buffer);
+// }
 
 function googleDelete (req, res, next) {
   console.log('checking data...');
@@ -124,13 +124,14 @@ function googleDelete (req, res, next) {
             console.log(`${config.CLOUD_BUCKET}/${targetFile} is deleted`);
             next()
           })
-          .catch(err => {
+          .catch(err => /* istanbul ignore next */ {
             res.status(500).json({
               message: 'failed to delete image',
               err
             })
           })
       } else {
+        /* istanbul ignore next */
         res.status(403).json({
           message: 'Unauthorized to delete'
         })
@@ -138,7 +139,7 @@ function googleDelete (req, res, next) {
 
 
     })
-    .catch(e => {
+    .catch(e => /* istanbul ignore next */ {
       console.log(e);
       next(e)
     })
@@ -149,5 +150,5 @@ function googleDelete (req, res, next) {
 module.exports = {
   googleUpload: googleUpload,
   googleDelete: googleDelete,
-  googleUploadWinner: googleUploadWinner
+  // googleUploadWinner: googleUploadWinner
 };

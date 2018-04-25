@@ -31,7 +31,7 @@ describe('server api should execute with no errors', () => {
         firebase.auth().currentUser.getIdToken(/* forceRefresh */ true)
           .then(resp => {
             token = resp
-            // console.log(token);
+            console.log(token);
             expect(token).to.not.be.null
             done()
           })
@@ -350,7 +350,7 @@ describe('testing upload image', () => {
         })
       }
     })
-  }).timeout(4000)
+  }).timeout(5000)
   it('should no be able to upload other files', (done) => {
     let testData = {
       roomName: 'chaiTesting',
@@ -395,5 +395,50 @@ describe('testing upload image', () => {
       }
     })
   }).timeout(4000)
+})
 
+
+describe('Update function should bad inputs', () => {
+  it('update should not receive payload', (done) => {
+    testID = 'falseID'
+    const falsePayload = {
+      malicousThing: ':v:v:v<Script>hahaha</Script>'
+    }
+    chai.request(app)
+    .put(`/treasure/update/${testID}`)
+    .set('token', token)
+    .send(falsePayload)
+    .end((err, res) => {
+      expect(err).to.be.null
+      expect(res).to.have.status(400)
+      expect(res.body.message).to.equal('No data should be submitted')
+      done()
+    })
+  }).timeout(4000)
+  it('update should not wrong room inputs', (done) => {
+    testID = 'falseID'
+    chai.request(app)
+    .put(`/treasure/update/${testID}`)
+    .set('token', token)
+    .send({})
+    .end((err, res) => {
+      expect(err).to.be.null
+      expect(res).to.have.status(400)
+      expect(res.body.message).to.equal('Invalid room')
+      done()
+    })
+  }).timeout(4000)
+  it('update should not process suspicious params', (done) => {
+    testID = 'somereallylongidthatcanbeperceivedascodeorberegexedtofindasubstansialcodeinsidethisstringthacanbedangerousifsendtouserbyanymeanspleasedonotdothisprotectandserveWAAAAHHHH'
+    chai.request(app)
+    .put(`/treasure/update/${testID}`)
+    .set('token', token)
+    .send({})
+    .end((err, res) => {
+      expect(err).to.be.null
+      expect(res).to.have.status(400)
+      expect(res.body.message).to.equal('ID invalid')
+      done()
+    })
+  }).timeout(4000)
 })

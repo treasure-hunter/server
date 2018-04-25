@@ -10,6 +10,7 @@ let memUpload = multer({
   fileFilter: function (req, file, cb) {
     // check for file extension
     console.log(file);
+    /* istanbul ignore else  */
     if (file.mimetype === 'image/png' || file.mimetype === 'image/gif' || file.mimetype === 'image/jpeg')
     {
       console.log('====Image Accepted====');

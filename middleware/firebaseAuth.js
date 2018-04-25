@@ -10,7 +10,7 @@ function verifyToken (req, res, next) {
     // console.log(uid);
     console.log(req.uid);
     next()
-  }).catch(function(error) {
+  }).catch(function(error) /* istanbul ignore next */ {
     console.log('err', error);
     res.status(403).json({
       message: 'unauthorized',

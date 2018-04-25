@@ -8,10 +8,12 @@ module.exports = {
     // validation
     console.log(req.body);
     if (!req.body) {
+      /* istanbul ignore next */
       return res.status(400).json({
         message: 'no data sent'
       })
     } else if (!req.uid) {
+      /* istanbul ignore next */
       return res.status(400).json({
         message: 'no user id'
       })
@@ -68,72 +70,95 @@ module.exports = {
 
     // mock
     let match = true
-    if (req.params.id.length > 30) {
+    /* istanbul ignore if */
+    if (req.params.id.length > 30 || req.params.id == undefined) {
       return res.status(400).json({
-        message: 'ID too long'
+        message: 'ID invalid'
       })
+    } else if (req.body) {
+      if (Object.keys(req.body).length !== 0) {
+        return res.status(400).json({
+          message: 'No data should be submitted'
+        })
+      }
     }
     let id = req.params.id
     let updates = {
       isCompleted: true
     }
-    if (match) {
-      admin.auth().getUser(req.uid)
-        .then(userRecord => {
-          let displayName
-          if (userRecord.displayName === undefined) {
-            displayName = 'Anonymous'
-          } else {
-            displayName = userRecord.displayName
-          }
-          // console.log(displayName);
-          database.ref('Room').child(id).update(updates).then(() => {
-            database.ref('Room').child(id).child('winner').child(req.uid).once('value')
-              .then(snapshot => {
-                // console.log(snapshot.val());
-                if (snapshot.val() === null) {
-                  database.ref('Room')
-                    .child(id)
-                    .child('winner')
-                    .child(req.uid)
-                    .set({
-                      displayName: displayName,
-                      uid: req.uid
-                    }, (err) => {
-                      if (err) {
-                        res.status(500).json({
-                          message: 'update error',
-                          err
-                        })
+    // verify update location has actual data
+    database.ref('Room').child(id).once('value')
+      .then(snapshot => {
+        console.log(snapshot.val());
+        if (snapshot.val() === null) {
+          res.status(400).json({
+            message: 'Invalid room'
+          })
+        } else {
+          /* istanbul ignore else */
+          if (match) {
+            admin.auth().getUser(req.uid)
+              .then(userRecord => {
+                let displayName
+                /* istanbul ignore else */
+                if (userRecord.displayName === undefined) {
+                  displayName = 'Anonymous'
+                } else {
+                  displayName = userRecord.displayName
+                }
+                database.ref('Room').child(id).update(updates).then(() => {
+                  database.ref('Room').child(id).child('winner').child(req.uid).once('value')
+                    .then(snapshot => {
+                      // console.log(snapshot.val());
+                      if (snapshot.val() === null) {
+                        database.ref('Room')
+                          .child(id)
+                          .child('winner')
+                          .child(req.uid)
+                          .set({
+                            displayName: displayName,
+                            uid: req.uid
+                          }, (err) => {
+                            if (err) {
+                              /* istanbul ignore next */
+                              res.status(500).json({
+                                message: 'update error',
+                                err
+                              })
+                            } else {
+                              res.status(200).json({
+                                message: 'Room sucessfully completed'
+                              })
+                            }
+                          })
                       } else {
-                        res.status(200).json({
-                          message: 'Room sucessfully completed'
+                        /* istanbul ignore next */
+                        res.status(403).json({
+                          message: 'You cannot win twice!'
                         })
                       }
                     })
-                } else {
-                  res.status(403).json({
-                    message: 'You cannot win twice!'
+                })
+                .catch(err => /* istanbul ignore next */ {
+                  res.status(500).json({
+                    message: 'something went wrong at firebase update',
+                    err
                   })
-                }
-
+                })
               })
-          }).catch(err => {
-            res.status(500).json({
-              message: 'something went wrong at firebase update',
-              err
-            })
-          })
-        }).catch(err => {
-          res.status(500).json({
-            message: 'something went wrong at firebase get user name',
-            err
-          })
-        })
-    }
+              .catch(err => /* istanbul ignore next */ {
+                res.status(500).json({
+                  message: 'something went wrong at firebase get user name',
+                  err
+                })
+              })
+          }
+        }
+      })
   },
   deleteRoom: (req, res) => {
     // too remove treasure data after finished
+    /* istanbul ignore if */
     if (req.params.id.length > 30) {
       return res.status(400).json({
         message: 'ID too long'
