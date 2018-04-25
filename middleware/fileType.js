@@ -11,6 +11,7 @@ function checkUpload (req, res, next) {
       return next()
     } else {
       console.log(fileInfo.mime);
+      /* istanbul ignore else  */
       if (fileInfo.mime === 'image/png' || fileInfo.mime === 'image/gif' || fileInfo.mime === 'image/jpeg') {
         return next()
       } else {
