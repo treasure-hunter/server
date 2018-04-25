@@ -18,17 +18,21 @@ module.exports = {
       return res.status(400).json({
         message: 'no room name'
       })
-    } else if (!req.body.treasures) {
-      return res.status(400).json({
-        message: 'no treasures location data'
-      })
     }
     // console.log(req.body);
+    let path
+    if (!req.file.cloudUrl) {
+      path = 'N/A'
+    } else {
+      path = req.file.cloudUrl
+    }
     const data = {
       roomName: req.body.roomName,
       description: req.body.description,
-      treasures: req.body.treasures,
-      image_path: req.file.cloudUrl,
+      hint: req.body.hint,
+      longitude: req.body.longitude,
+      latitude: req.body.latitude,
+      image_path: path,
       isCompleted: false,
       uid: req.uid,
       createdAt: firebase.database.ServerValue.TIMESTAMP
