@@ -20,11 +20,13 @@ function storageUrl (filename) {
 // middleware
 function googleUpload (req, res, next) {
   console.log('===== gcs checking file... =====');
-  console.log(req.file);
+
   if (!req.file) {
     console.log('no file uploaded, skipping...');
     return next();
   }
+  console.log(req.file);
+  
   const bucket = storage.bucket(config.CLOUD_BUCKET)
 
   let extension = req.file.originalname.split('.').pop()
