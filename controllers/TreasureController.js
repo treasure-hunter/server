@@ -41,11 +41,11 @@ module.exports = {
     // console.log(req.body);
     let path
     if (!req.file) {
+      console.log('===file not available===');
       path = 'N/A'
     } else {
       path = req.file.cloudUrl
     }
-    console.log(path);
     const data = {
       roomName: req.body.roomName,
       description: req.body.description,

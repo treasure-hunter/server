@@ -4,11 +4,9 @@ function verifyToken (req, res, next) {
   let idToken = req.headers.token
   admin.auth().verifyIdToken(idToken)
   .then(function(decodedToken) {
-    // console.log('token', decodedToken);
     var uid = decodedToken.uid;
     req.uid = uid
-    // console.log(uid);
-    console.log(req.uid);
+    console.log('===token decoded===');
     next()
   }).catch(function(error) /* istanbul ignore next */ {
     console.log('err', error);
